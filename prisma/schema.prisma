@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique @db.VarChar(40)
+  password  String   @db.VarChar(60)
+  role      Role     
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  inventories Inventory[] @relation("InventoryUsers")
+  operations Operation[]
+}
+
+model Inventory {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique @db.VarChar(50)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  users      User[]       @relation("InventoryUsers")
+  items      Item[]
+  operations Operation[]
+  categories Category[]
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(30)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items Item[]
+
+  inventoryId Int
+  inventory Inventory @relation(fields: [inventoryId], references: [id])
+
+  @@unique([name, inventoryId])
+}
+
+model Item {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(30)
+  quantity    Int      @default(0) 
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  categoryId  Int
+  category    Category @relation(fields: [categoryId], references: [id])
+
+  inventoryId Int
+  inventory   Inventory @relation(fields: [inventoryId], references: [id])
+
+  operations Operation[]
+
+  @@unique([name, inventoryId])
+}
+
+model Operation {
+  id          Int      @id @default(autoincrement())
+  type        OperationType 
+  quantity    Int           
+  createdAt   DateTime      @default(now())
+  
+  userId      Int
+  user        User @relation(fields: [userId], references: [id])
+
+  inventoryId Int
+  inventory   Inventory @relation(fields: [inventoryId], references: [id])
+
+  itemId      Int
+  item        Item     @relation(fields: [itemId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  EMPLOYEE
+}
+
+enum OperationType {
+  ADD
+  REMOVE
+}
