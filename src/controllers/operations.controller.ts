@@ -115,6 +115,18 @@ export async function getOperationsByInventory(
       where: {
         inventoryId: inventoryId,
       },
+      include: {
+        user: {
+          select: {
+            email: true,
+          },
+        },
+        item: {
+          select: {
+            name: true,
+          },
+        },
+      },
       skip: (page - 1) * limit,
       take: limit,
       orderBy: {
@@ -190,6 +202,13 @@ export async function getOperationsByItem(
       where: {
         inventoryId: inventoryId,
         itemId: itemId,
+      },
+      include: {
+        user: {
+          select: {
+            email: true,
+          },
+        },
       },
       skip: (page - 1) * limit,
       take: limit,
@@ -267,6 +286,13 @@ export async function getOperationsByUser(
       where: {
         userId: targetUserId,
         inventoryId: inventoryId,
+      },
+      include: {
+        item: {
+          select: {
+            name: true,
+          },
+        },
       },
       skip: (page - 1) * limit,
       take: limit,
@@ -352,6 +378,18 @@ export async function getOperationsByCategory(
           categoryId: categoryId,
         },
         inventoryId: inventoryId,
+      },
+      include: {
+        user: {
+          select: {
+            email: true,
+          },
+        },
+        item: {
+          select: {
+            name: true,
+          },
+        },
       },
       skip: (page - 1) * limit,
       take: limit,

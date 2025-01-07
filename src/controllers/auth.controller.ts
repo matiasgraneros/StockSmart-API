@@ -18,7 +18,7 @@ export async function register(
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
-      res.status(400).json({ message: 'The email is already registered' });
+      res.status(409).json({ message: 'The email is already registered' });
       return;
     }
 
@@ -59,16 +59,25 @@ export async function login(req: Request, res: Response, next: NextFunction) {
       { userId: user.id, role: user.role },
       process.env.JWT_SECRET!,
       { expiresIn: '1h' }
+      // { expiresIn: '10s' }
     );
 
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      // secure: process.env.NODE_ENV === 'production',
+      secure: true,
+      sameSite: 'none',
       maxAge: 60 * 60 * 1000,
+      // maxAge: 10000,
     });
 
-    res.json({ message: 'Succesful login' });
+    res.json({
+      message: 'Successful login',
+      data: {
+        userEmail: email,
+        userRole: user.role,
+      },
+    });
   } catch (error) {
     next(error);
   }

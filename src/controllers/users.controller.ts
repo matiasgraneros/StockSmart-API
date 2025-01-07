@@ -77,7 +77,10 @@ export async function modifyUserInventoryRelation(
     });
 
     res.json({
-      message: `User updated (${action}ed)`,
+      message:
+        action === 'connect'
+          ? 'User added to the inventory'
+          : 'User removed from the inventory',
       user: updatedUser,
     });
   } catch (error) {

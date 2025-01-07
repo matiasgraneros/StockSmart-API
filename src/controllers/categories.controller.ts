@@ -27,7 +27,9 @@ export async function getCategories(
         inventoryId: inventoryId,
       },
       include: {
-        items: true,
+        _count: {
+          select: { items: true },
+        },
       },
     });
 

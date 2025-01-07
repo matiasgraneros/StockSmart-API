@@ -16,10 +16,10 @@ const router = express.Router();
 
 router.use(authenticate);
 
-router.get('/', adminOnly, getInventories);
+router.get('/', getInventories);
 router.get('/:inventoryId/users', adminOnly, getUsers);
 router.get('/:inventoryId', adminOnly, getInventory);
-router.get('/:inventoryId/items', adminOnly, getItems);
+router.get('/:inventoryId/items', getItems);
 router.post('/', adminOnly, validateSchema(inventorySchema), createInventory);
 
 export default router;

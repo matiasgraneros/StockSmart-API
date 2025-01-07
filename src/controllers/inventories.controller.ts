@@ -59,10 +59,14 @@ export async function getInventory(
     const inventory = await prisma.inventory.findUnique({
       where: { id: inventoryId },
       include: {
-        users: true,
-        items: true,
-        operations: true,
-        categories: true,
+        _count: {
+          select: {
+            users: true,
+            items: true,
+            operations: true,
+            categories: true,
+          },
+        },
       },
     });
 
@@ -86,12 +90,6 @@ export async function getInventories(
             id: userId,
           },
         },
-      },
-      include: {
-        users: true,
-        items: true,
-        operations: true,
-        categories: true,
       },
     });
 
@@ -141,6 +139,13 @@ export async function getItems(
         inventoryId: inventoryId,
         ...(categoryId && { categoryId: categoryId }),
       },
+      include: {
+        category: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
 
     res.status(200).json(items);
@@ -178,8 +183,11 @@ export async function getUsers(
           },
         },
       },
-      include: {
-        inventories: true,
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        createdAt: true,
       },
     });
 
